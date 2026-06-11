@@ -18,7 +18,7 @@ See ["Caching dependencies to speed up workflows"](https://docs.github.com/en/ac
 ### ⚠️ Important changes
 
 > [!IMPORTANT]
-> `actions/cache@v6` runs on the Node.js 24 runtime and requires a minimum Actions Runner version of `2.327.1`.
+> `actions/cache@v5` runs on the Node.js 24 runtime and requires a minimum Actions Runner version of `2.327.1`.
 > If you are using self-hosted runners, ensure they are updated before upgrading.
 
 The cache backend service has been rewritten from the ground up for improved performance and reliability. [actions/cache](https://github.com/actions/cache) now integrates with the new cache service (v2) APIs.

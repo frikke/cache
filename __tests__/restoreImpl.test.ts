@@ -48,7 +48,7 @@ const testUtils = await import("../src/utils/testUtils");
 
 beforeEach(() => {
     jest.clearAllMocks();
-    (core.getInput as jest.Mock).mockImplementation(
+    jest.mocked(core.getInput).mockImplementation(
         (name: string, options?: { required?: boolean }) => {
             const val =
                 process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ||
@@ -59,8 +59,8 @@ beforeEach(() => {
             return val.trim();
         }
     );
-    (core.getState as jest.Mock).mockReturnValue("");
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(true);
+    jest.mocked(core.getState).mockReturnValue("");
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(true);
     process.env[Events.Key] = Events.Push;
     process.env[RefKey] = "refs/heads/feature-branch";
 });
@@ -83,7 +83,7 @@ test("restore with invalid event outputs warning", async () => {
 });
 
 test("restore without AC available should no-op", async () => {
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(false);
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(false);
 
     await restoreImpl(new StateProvider());
 
@@ -93,13 +93,21 @@ test("restore without AC available should no-op", async () => {
 });
 
 test("restore on GHES without AC available should no-op", async () => {
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(false);
+    process.env["GITHUB_SERVER_URL"] = "https://my-ghes-server.com";
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(false);
 
     await restoreImpl(new StateProvider());
 
     expect(cache.restoreCache).toHaveBeenCalledTimes(0);
     expect(core.setOutput).toHaveBeenCalledTimes(1);
     expect(core.setOutput).toHaveBeenCalledWith("cache-hit", "false");
+    expect(core.info).toHaveBeenCalledWith(
+        expect.stringContaining(
+            "Cache action is only supported on GHES version >= 3.5"
+        )
+    );
+
+    delete process.env["GITHUB_SERVER_URL"];
 });
 
 test("restore on GHES with AC available ", async () => {
@@ -111,7 +119,7 @@ test("restore on GHES with AC available ", async () => {
         enableCrossOsArchive: false
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(key);
+    jest.mocked(cache.restoreCache).mockResolvedValue(key);
 
     await restoreImpl(new StateProvider());
 
@@ -160,7 +168,7 @@ test("restore with too many keys should fail", async () => {
         restoreKeys,
         enableCrossOsArchive: false
     });
-    (cache.restoreCache as jest.Mock).mockRejectedValue(
+    jest.mocked(cache.restoreCache).mockRejectedValue(
         new Error("Key Validation Error: Keys are limited to a maximum of 10.")
     );
     await restoreImpl(new StateProvider());
@@ -178,7 +186,7 @@ test("restore with large key should fail", async () => {
         key,
         enableCrossOsArchive: false
     });
-    (cache.restoreCache as jest.Mock).mockRejectedValue(
+    jest.mocked(cache.restoreCache).mockRejectedValue(
         new Error(
             `Key Validation Error: ${key} cannot be larger than 512 characters.`
         )
@@ -198,7 +206,7 @@ test("restore with invalid key should fail", async () => {
         key,
         enableCrossOsArchive: false
     });
-    (cache.restoreCache as jest.Mock).mockRejectedValue(
+    jest.mocked(cache.restoreCache).mockRejectedValue(
         new Error(`Key Validation Error: ${key} cannot contain commas.`)
     );
     await restoreImpl(new StateProvider());
@@ -217,7 +225,7 @@ test("restore with no cache found", async () => {
         enableCrossOsArchive: false
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(undefined);
+    jest.mocked(cache.restoreCache).mockResolvedValue(undefined);
 
     await restoreImpl(new StateProvider());
 
@@ -240,7 +248,7 @@ test("restore with restore keys and no cache found", async () => {
         enableCrossOsArchive: false
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(undefined);
+    jest.mocked(cache.restoreCache).mockResolvedValue(undefined);
 
     await restoreImpl(new StateProvider());
 
@@ -261,7 +269,7 @@ test("restore with cache found for key", async () => {
         enableCrossOsArchive: false
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(key);
+    jest.mocked(cache.restoreCache).mockResolvedValue(key);
 
     await restoreImpl(new StateProvider());
 
@@ -284,7 +292,7 @@ test("restore with cache found for restore key", async () => {
         enableCrossOsArchive: false
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(restoreKey);
+    jest.mocked(cache.restoreCache).mockResolvedValue(restoreKey);
 
     await restoreImpl(new StateProvider());
 
@@ -307,7 +315,7 @@ test("restore with lookup-only set", async () => {
         lookupOnly: true
     });
 
-    (cache.restoreCache as jest.Mock).mockResolvedValue(key);
+    jest.mocked(cache.restoreCache).mockResolvedValue(key);
 
     await restoreImpl(new StateProvider());
 

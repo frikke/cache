@@ -50,7 +50,7 @@ let pristineEnv: NodeJS.ProcessEnv;
 beforeEach(() => {
     pristineEnv = { ...process.env };
     jest.clearAllMocks();
-    (core.getInput as jest.Mock).mockImplementation(
+    jest.mocked(core.getInput).mockImplementation(
         (name: string, options?: { required?: boolean }) => {
             const val =
                 process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] ||
@@ -217,12 +217,12 @@ test("getInputAsBool throws if required and value missing", () => {
 });
 
 test("isCacheFeatureAvailable for ac enabled", () => {
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(true);
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(true);
     expect(actionUtils.isCacheFeatureAvailable()).toBe(true);
 });
 
 test("isCacheFeatureAvailable for ac disabled on GHES", () => {
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(false);
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(false);
 
     const message = `Cache action is only supported on GHES version >= 3.5. If you are on version >=3.5 Please check with GHES admin if Actions cache service is enabled or not.
 Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github Connect, please unretire the actions/cache namespace before upgrade (see https://docs.github.com/en/enterprise-server@3.5/admin/github-actions/managing-access-to-actions-from-githubcom/enabling-automatic-access-to-githubcom-actions-using-github-connect#automatic-retirement-of-namespaces-for-actions-accessed-on-githubcom)`;
@@ -237,7 +237,7 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
 });
 
 test("isCacheFeatureAvailable for ac disabled on dotcom", () => {
-    (cache.isFeatureAvailable as jest.Mock).mockReturnValue(false);
+    jest.mocked(cache.isFeatureAvailable).mockReturnValue(false);
 
     const message =
         "An internal error has occurred in cache backend. Please check https://www.githubstatus.com/ for any ongoing issue in actions.";

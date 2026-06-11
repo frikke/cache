@@ -101,11 +101,19 @@ test("save without AC available should no-op", async () => {
 });
 
 test("save on ghes without AC available should no-op", async () => {
+    process.env["GITHUB_SERVER_URL"] = "https://my-ghes-server.com";
     (cache.isFeatureAvailable as jest.Mock).mockReturnValue(false);
 
     await saveImpl(new StateProvider());
 
     expect(cache.saveCache).toHaveBeenCalledTimes(0);
+    expect(core.info).toHaveBeenCalledWith(
+        expect.stringContaining(
+            "Cache action is only supported on GHES version >= 3.5"
+        )
+    );
+
+    delete process.env["GITHUB_SERVER_URL"];
 });
 
 test("save on GHES with AC available", async () => {
@@ -159,8 +167,8 @@ test("save with missing input outputs warning", async () => {
     const savedCacheKey = "Linux-node-";
 
     (core.getState as jest.Mock)
-        .mockReturnValueOnce(savedCacheKey)
-        .mockReturnValueOnce(primaryKey);
+        .mockReturnValueOnce(primaryKey)
+        .mockReturnValueOnce(savedCacheKey);
 
     await saveImpl(new StateProvider());
 
