@@ -184,8 +184,8 @@ test("save with large cache outputs warning", async () => {
     const savedCacheKey = "Linux-node-";
 
     (core.getState as jest.Mock)
-        .mockReturnValueOnce(savedCacheKey)
-        .mockReturnValueOnce(primaryKey);
+        .mockReturnValueOnce(primaryKey)
+        .mockReturnValueOnce(savedCacheKey);
 
     const inputPath = "node_modules";
     testUtils.setInput(Inputs.Path, inputPath);
@@ -210,8 +210,8 @@ test("save with reserve cache failure outputs warning", async () => {
     const savedCacheKey = "Linux-node-";
 
     (core.getState as jest.Mock)
-        .mockReturnValueOnce(savedCacheKey)
-        .mockReturnValueOnce(primaryKey);
+        .mockReturnValueOnce(primaryKey)
+        .mockReturnValueOnce(savedCacheKey);
 
     const inputPath = "node_modules";
     testUtils.setInput(Inputs.Path, inputPath);
@@ -236,8 +236,8 @@ test("save with server error outputs warning", async () => {
     const savedCacheKey = "Linux-node-";
 
     (core.getState as jest.Mock)
-        .mockReturnValueOnce(savedCacheKey)
-        .mockReturnValueOnce(primaryKey);
+        .mockReturnValueOnce(primaryKey)
+        .mockReturnValueOnce(savedCacheKey);
 
     const inputPath = "node_modules";
     testUtils.setInput(Inputs.Path, inputPath);
