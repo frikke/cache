@@ -38,6 +38,11 @@ Upgrading to the recommended versions will not break your workflows.
 
 Read more about the change & access the migration guide: [reference to the announcement](https://github.com/actions/cache/discussions/1510).
 
+### v6
+
+* Updated `@actions/cache`, `@actions/core`, `@actions/exec` to latest major versions
+* Migrated to ESM module system
+
 ### v5
 
 * Updated to node 24
@@ -127,7 +132,7 @@ jobs:
 
     - name: Cache Primes
       id: cache-primes
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: prime-numbers
         key: ${{ runner.os }}-primes
@@ -158,7 +163,7 @@ jobs:
 
     - name: Restore cached Primes
       id: cache-primes-restore
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         path: |
           path/to/dependencies
@@ -169,7 +174,7 @@ jobs:
     .
     - name: Save Primes
       id: cache-primes-save
-      uses: actions/cache/save@v5
+      uses: actions/cache/save@v6
       with:
         path: |
           path/to/dependencies
@@ -224,7 +229,7 @@ A cache key can include any of the contexts, functions, literals, and operators 
 For example, using the [`hashFiles`](https://docs.github.com/en/actions/learn-github-actions/expressions#hashfiles) function allows you to create a new cache when dependencies change.
 
 ```yaml
-  - uses: actions/cache@v5
+  - uses: actions/cache@v6
     with:
       path: |
         path/to/dependencies
@@ -242,7 +247,7 @@ Additionally, you can use arbitrary command output in a cache key, such as a dat
       echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
     shell: bash
 
-  - uses: actions/cache@v5
+  - uses: actions/cache@v6
     with:
       path: path/to/dependencies
       key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('**/lockfiles') }}
@@ -264,7 +269,7 @@ Example:
 steps:
   - uses: actions/checkout@v6
 
-  - uses: actions/cache@v5
+  - uses: actions/cache@v6
     id: cache
     with:
       path: path/to/dependencies
@@ -296,7 +301,7 @@ jobs:
 
       - name: Cache Primes
         id: cache-primes
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: prime-numbers
           key: primes
@@ -307,7 +312,7 @@ jobs:
 
       - name: Cache Numbers
         id: cache-numbers
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: numbers
           key: primes
@@ -323,7 +328,7 @@ jobs:
 
       - name: Cache Primes
         id: cache-primes
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: prime-numbers
           key: primes
